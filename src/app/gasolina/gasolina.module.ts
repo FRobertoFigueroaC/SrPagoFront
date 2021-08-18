@@ -7,7 +7,7 @@ import {GasolinaFormComponent} from "./views/gasolina-form/gasolina-form.compone
 
 @NgModule({
   declarations: [
-    GasolinaFormComponent
+    GasolinaFormComponent,
   ],
   imports: [
     CommonModule,

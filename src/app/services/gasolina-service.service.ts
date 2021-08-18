@@ -16,7 +16,6 @@ export class GasolinaServiceService {
   constructor(private http:HttpClient) { }
 
   getGasolinas(code:string):Observable<GasolinasResult>{
-    console.log('running')
     const url:string = `${gasUrl}/getGasoline/${code}`
     return this.http.get<GasolinasResult>(url)
   }
