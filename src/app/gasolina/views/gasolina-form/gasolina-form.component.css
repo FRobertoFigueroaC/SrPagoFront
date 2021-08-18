@@ -1,0 +1,13 @@
+.mapa-container{
+  height: 300px;
+  width: 100%;
+}
+.list-group{
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 50;
+}
+li{
+  cursor: pointer;
+}
