@@ -11,5 +11,6 @@ app-menu{
 html, body{
   height: 100%;
   width: 100%;
+  background-color: #f6f7ff!important
 }
 
