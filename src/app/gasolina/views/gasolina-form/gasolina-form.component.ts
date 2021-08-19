@@ -42,6 +42,8 @@ export class GasolinaFormComponent implements OnInit, AfterViewInit {
     state_id: ['',],
     cp: ['', Validators.required],
   })
+  // loading
+  public loading:boolean = false;
 
 
   constructor(private fb:FormBuilder,
@@ -71,39 +73,37 @@ export class GasolinaFormComponent implements OnInit, AfterViewInit {
     });
   }
 
-  SearchGas(){
+  async SearchGas(){
     if (this.form.valid){
       this.DeleteMarkers();
       this.gasolinas = [];
-      this.gasService.getGasolinas(this.form.get('cp')?.value)
-        .subscribe(response => this.ProcessResults(response))
+      this.loading = true
+      await this.gasService.GetGasolinasAsycn(this.form.get('cp')?.value)
+        .then(gasolinas => {
+          this.ProcessResults(gasolinas)
+        }).then(() => this.loading = false)
     }
   }
 
-  GetSates(){
-    this.stateService.getStates()
-      .subscribe(states => {
-        this.states = states.results;
-      })
+  async GetSates(){
+    await this.stateService.GetStatesAsycn().then(states => this.states = states)
   }
 
-  GetMunicipalities(state_id:number = 0){
-    this.municipalityService.getMunicipalities(state_id)
-      .subscribe(municipalities => {
-        this.municipalities = municipalities.results
-      })
+  async GetMunicipalities(state_id:number = 0){
+    await this.municipalityService.GetMunicipalitiesAsync(state_id).then(municipalities => this.municipalities = municipalities)
   }
 
-  ProcessResults (gasResult: GasolinasResult) {
-    this.gasolinas = gasResult.results;
+  ProcessResults (gasolinas: Gasolina[]) {
+    this.gasolinas = gasolinas;
     this.gasolinas.forEach(gasolina => {
       const lat = gasolina.latitude;
       const long = gasolina.longitude
       this.AddMarker([long,lat])
     })
-    const markerCenter = this.marcadores[0].marker?.getLngLat();
-    this.map.setCenter([markerCenter!.lng,markerCenter!.lat]);
-
+    if (this.marcadores.length > 0){
+      const markerCenter = this.marcadores[0].marker?.getLngLat();
+      this.map.setCenter([markerCenter!.lng,markerCenter!.lat]);
+    }
   }
 
   AddMarker(position:[string, string]) {

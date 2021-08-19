@@ -23,23 +23,27 @@
                 class="form-control mt-1" id="municipio">
                 <option value="" disabled>Seleccionar ...</option>
                 <option *ngFor="let municipality of municipalities;" [value]="municipality.cp">
-                  {{municipality.cp}} - {{municipality.name}}
+                  {{municipality.name}}
                 </option>
               </select>
             </div>
-            <button type="submit" class="btn btn-primary float-end mt-4" >
+            <button type="submit" class="btn btn-primary float-end mt-4" [disabled]="form.invalid">
               Consultar
             </button>
           </form>
         </div>
       </div>
     </div>
+
     <div class="col-sm-12 mt-sm-4 col-md-8 mt-md-0">
       <div class="row">
         <div #mapa class="mapa-container"></div>
       </div>
       <div class="row">
-        <div class="col">
+        <div *ngIf="loading" class="alert alert-primary" role="alert">
+          Buscando ...
+        </div>
+        <div *ngIf="!loading"  class="col">
           <h4>{{gasolinas.length}} Resultados</h4>
           <table class="table table-striped table-responsive">
             <thead class="table-dark">
@@ -48,7 +52,7 @@
               <th>CP</th>
               <th>$Regular</th>
               <th>Premium</th>
-              <th>Dieasel</th>
+              <th>Diesel</th>
               <th>Dirección</th>
             </tr>
             </thead>

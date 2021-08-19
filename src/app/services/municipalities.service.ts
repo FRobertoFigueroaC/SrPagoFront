@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
 import {HttpClient} from "@angular/common/http";
 import {environment} from "../../environments/environment";
-import {MunicipalitiesResponse} from "../interfaces/municipality.interface";
+import {MunicipalitiesResponse, Municipality} from "../interfaces/municipality.interface";
 import {Observable} from "rxjs";
+
 
 const gasUrl = environment.baseUrl;
 
@@ -22,4 +23,20 @@ export class MunicipalitiesService {
       params,
     })
   }
+
+
+  async GetMunicipalitiesAsync(state_id:number = 0):Promise<Municipality[]>{
+    const url:string = `${gasUrl}/getMunicipalities?stateId=${state_id}`
+
+    return  new Promise((resolve) => {
+      fetch(url).then( resp => resp.json())
+        .then(body => {
+          resolve(body.results)
+        })
+    });
+  }
+
+
+
+
 }
