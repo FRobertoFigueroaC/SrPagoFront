@@ -10,7 +10,7 @@ Para el funcionamiento de este proyecto son necesarios:
 
 # Proyecto backed (Laravel)
 
-https://github.com/FRobertoFigueroaC/SrPagoTest 
+https://github.com/FRobertoFigueroaC/SrPagoFront
 
 # Gasolinas 
 
