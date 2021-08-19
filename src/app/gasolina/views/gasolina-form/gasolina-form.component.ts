@@ -21,7 +21,7 @@ import {State} from "../../../interfaces/state.iterface";
     `
       .mapa-container{
         height: 300px;
-        width: 90%;
+        width: 100%;
       }
     `
   ]
