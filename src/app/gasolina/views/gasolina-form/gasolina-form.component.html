@@ -49,7 +49,6 @@
             <thead class="table-dark">
             <tr>
               <th>#</th>
-              <th>CP</th>
               <th>$Regular</th>
               <th>Premium</th>
               <th>Diesel</th>
@@ -59,7 +58,7 @@
             <tbody>
               <tr *ngFor="let gasoline of gasolinas">
                 <th scope="row">1</th>
-                <th>{{gasoline.codigopostal}}</th>
+<!--                <th>{{gasoline.codigopostal}}</th>-->
                 <td>
                   <span class="bg-success rounded text-white p-1">
                     {{gasoline.regular | currency}}
