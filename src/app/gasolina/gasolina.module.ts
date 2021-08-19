@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 
 import { GasolinaRoutingModule } from './gasolina-routing.module';
 import {GasolinaFormComponent} from "./views/gasolina-form/gasolina-form.component";
+import {ReactiveFormsModule} from "@angular/forms";
 
 
 @NgModule({
@@ -11,6 +12,7 @@ import {GasolinaFormComponent} from "./views/gasolina-form/gasolina-form.compone
   ],
   imports: [
     CommonModule,
+    ReactiveFormsModule,
     GasolinaRoutingModule,
   ]
 })

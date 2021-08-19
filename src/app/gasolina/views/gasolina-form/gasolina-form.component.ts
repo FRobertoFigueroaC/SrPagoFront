@@ -1,34 +1,65 @@
+// Angular
 import {AfterViewInit, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
+import {FormBuilder, FormGroup, Validators} from "@angular/forms";
+// Libraries
 import * as mapboxgl from "mapbox-gl";
+// Services
 import {GasolinaServiceService} from "../../../services/gasolina-service.service";
+import {MunicipalitiesService} from "../../../services/municipalities.service";
+import {StatesService} from "../../../services/states.service";
+// Interfaces
 import {Gasolina, GasolinasResult} from "../../../interfaces/gasolina.interface";
 import {MarcadorColor} from "../../../interfaces/marcardor.interface";
-
+import {Municipality} from "../../../interfaces/municipality.interface";
+import {State} from "../../../interfaces/state.iterface";
 
 
 @Component({
   selector: 'app-gasolina-form',
   templateUrl: './gasolina-form.component.html',
-  styleUrls: ['./gasolina-form.component.css']
+  styles: [
+    `
+      .mapa-container{
+        height: 300px;
+        width: 90%;
+      }
+    `
+  ]
 })
 export class GasolinaFormComponent implements OnInit, AfterViewInit {
-  // view child nos permitira tener multiples instancias de mapas sin necesidad de repetir un id
-
+  // Mapa
   @ViewChild('mapa')  divMapa!: ElementRef
   map!: mapboxgl.Map;
-
-
   lngLat:[number, number] =[-99.13342539732879,19.43224981046549];
+  public marcadores: MarcadorColor[] = [];
+  // Tabla -Gasolina
+  public gasolinas: Gasolina[] = [];
+  // Combos - Estados y Municipios
+  public states:State[] = [];
+  public municipalities:Municipality[] = [];
+  // form
+  form:FormGroup = this.fb.group({
+    state_id: ['',],
+    cp: ['', Validators.required],
+  })
 
-  gasolinas: Gasolina[] = [];
 
-  marcadores: MarcadorColor[] = [];
-
-  constructor(private gasService:GasolinaServiceService) { }
+  constructor(private fb:FormBuilder,
+              private gasService:GasolinaServiceService,
+              private stateService:StatesService,
+              private municipalityService:MunicipalitiesService) { }
 
   ngOnInit(): void {
-    this.SearchGas();
+    this.GetSates()
+    this.GetMunicipalities(0)
+
+    this.form.get('state_id')?.valueChanges
+      .subscribe(state_id => {
+        this.form.get('cp')?.reset('')
+        this.GetMunicipalities(state_id)
+      })
   }
+
   ngAfterViewInit(): void {
     // se construye aqui el elemento porque tenemos acceso al html creado
 
@@ -41,10 +72,26 @@ export class GasolinaFormComponent implements OnInit, AfterViewInit {
   }
 
   SearchGas(){
-    this.DeleteMarkers();
-    this.gasolinas = [];
-    this.gasService.getGasolinas('06010')
-      .subscribe(response => this.ProcessResults(response))
+    if (this.form.valid){
+      this.DeleteMarkers();
+      this.gasolinas = [];
+      this.gasService.getGasolinas(this.form.get('cp')?.value)
+        .subscribe(response => this.ProcessResults(response))
+    }
+  }
+
+  GetSates(){
+    this.stateService.getStates()
+      .subscribe(states => {
+        this.states = states.results;
+      })
+  }
+
+  GetMunicipalities(state_id:number = 0){
+    this.municipalityService.getMunicipalities(state_id)
+      .subscribe(municipalities => {
+        this.municipalities = municipalities.results
+      })
   }
 
   ProcessResults (gasResult: GasolinasResult) {
@@ -54,6 +101,9 @@ export class GasolinaFormComponent implements OnInit, AfterViewInit {
       const long = gasolina.longitude
       this.AddMarker([long,lat])
     })
+    const markerCenter = this.marcadores[0].marker?.getLngLat();
+    this.map.setCenter([markerCenter!.lng,markerCenter!.lat]);
+
   }
 
   AddMarker(position:[string, string]) {
